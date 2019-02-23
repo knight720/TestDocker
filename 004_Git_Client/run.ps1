@@ -1,0 +1,1 @@
+docker run --rm -it myscratch:190223
