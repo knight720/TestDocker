@@ -4,19 +4,18 @@ MAINTAINER knight
 
 RUN apk update
 RUN apk add git
-WORKDIR /app
+WORKDIR /code
 RUN git clone https://github.com/knight720/VoteIt.git
 
-## Build Application
-#FROM microsoft/dotnet:2.2-sdk AS build
-#WORKDIR /app
-#
-### copy csproj and restore as distinct layers
-#COPY --from=code /app/aspnetapp/out ./
-#COPY *.sln .
-#COPY aspnetapp/*.csproj ./aspnetapp/
-#RUN dotnet restore
-#
+# Build Application
+FROM microsoft/dotnet:2.2-sdk AS build
+WORKDIR /app
+
+## copy csproj and restore as distinct layers
+COPY --from=code /code/VoteIt/src/VoteIt/*.sln .
+COPY aspnetapp/*.csproj ./aspnetapp/
+RUN dotnet restore
+
 ### copy everything else and build app
 #COPY aspnetapp/. ./aspnetapp/
 #WORKDIR /app/aspnetapp
