@@ -13,16 +13,16 @@ WORKDIR /app
 
 ## copy csproj and restore as distinct layers
 COPY --from=code /code/VoteIt/src/VoteIt/*.sln .
-COPY aspnetapp/*.csproj ./aspnetapp/
+COPY --from=code /code/VoteIt/src/VoteIt/VoteIt/*.csproj ./VoteIt/
 RUN dotnet restore
 
-### copy everything else and build app
-#COPY aspnetapp/. ./aspnetapp/
-#WORKDIR /app/aspnetapp
-#RUN dotnet publish -c Release -o out
-#
-## Deploy Application
-#FROM microsoft/dotnet:2.2-aspnetcore-runtime AS runtime
-#WORKDIR /app
-#COPY --from=build /app/aspnetapp/out ./
-#ENTRYPOINT ["dotnet", "aspnetapp.dll"]
+# copy everything else and build app
+COPY --from=code /code/VoteIt/src/VoteIt/. ./VoteIt/
+WORKDIR /app/VoteIt
+RUN dotnet publish -c Release -o out
+
+# Deploy Application
+FROM microsoft/dotnet:2.2-aspnetcore-runtime AS runtime
+WORKDIR /app
+COPY --from=build /app/VoteIt/out ./
+ENTRYPOINT ["dotnet", "VoteIt.dll"]
