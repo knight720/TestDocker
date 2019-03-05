@@ -1,28 +1,29 @@
 # Clone Repository
-FROM alpine AS code
+FROM alpine AS git_client
 MAINTAINER knight
 
 RUN apk update
 RUN apk add git
-WORKDIR /code
+WORKDIR /repo
 RUN git clone https://github.com/knight720/VoteIt.git
 
 # Build Application
-FROM microsoft/dotnet:2.2-sdk AS build
-WORKDIR /app
+FROM microsoft/dotnet:2.2-sdk AS dotnet_sdk
+WORKDIR /code
 
 ## copy csproj and restore as distinct layers
-COPY --from=code /code/VoteIt/src/VoteIt/*.sln .
-COPY --from=code /code/VoteIt/src/VoteIt/VoteIt/*.csproj ./VoteIt/
+COPY --from=git_client /repo/VoteIt/src/VoteIt/*.sln .
+COPY --from=git_client /repo/VoteIt/src/VoteIt/VoteIt/*.csproj ./VoteIt/
 RUN dotnet restore
 
 # copy everything else and build app
-COPY --from=code /code/VoteIt/src/VoteIt/. ./VoteIt/
-WORKDIR /app/VoteIt
-RUN dotnet publish -c Release -o out
+COPY --from=git_client /repo/VoteIt/src/VoteIt/. ./VoteIt/
+WORKDIR /code/VoteIt
+RUN dotnet publish -c Release -o code_publish
 
 # Deploy Application
-FROM microsoft/dotnet:2.2-aspnetcore-runtime AS runtime
+FROM microsoft/dotnet:2.2-aspnetcore-runtime AS dotnet_runtime
 WORKDIR /app
-COPY --from=build /app/VoteIt/out ./
-ENTRYPOINT ["dotnet", "VoteIt.dll"]
+COPY --from=dotnet_sdk /code/VoteIt/VoteIt/code_publish ./
+COPY --from=git_client /repo/VoteIt/data/VoteItDB.sqlite ./
+CMD ["dotnet", "VoteIt.dll"]
