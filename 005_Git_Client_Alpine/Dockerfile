@@ -23,6 +23,10 @@ RUN dotnet publish -c Release -o code_publish
 
 # Deploy Application
 FROM microsoft/dotnet:2.2-aspnetcore-runtime AS dotnet_runtime
+
+RUN export ASPNETCORE_ENVIRONMENT="Production"
+ENV ASPNETCORE_ENVIRONMENT Production
+
 WORKDIR /app
 COPY --from=dotnet_sdk /code/VoteIt/VoteIt/code_publish ./
 COPY --from=git_client /repo/VoteIt/data/VoteItDB.sqlite ./
