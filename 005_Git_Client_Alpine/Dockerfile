@@ -22,10 +22,25 @@ WORKDIR /code/VoteIt
 RUN dotnet publish -c Release -o code_publish
 
 # Deploy Application
+ARG APPENV=ADefault
 FROM microsoft/dotnet:2.2-aspnetcore-runtime AS dotnet_runtime
 
-RUN export ASPNETCORE_ENVIRONMENT="Production"
-ENV ASPNETCORE_ENVIRONMENT Production
+RUN echo $APPENV
+RUN echo ${APPENV}
+
+# work
+#ENV ASPNETCORE_ENVIRONMENT Default
+
+#RUN echo "${APPENV}"
+# not work
+ENV ASPNETCORE_ENVIRONMENT ${APPENV}
+# not work
+#ENV ASPNETCORE_ENVIRONMENT=${APPENV}
+# not work
+#ENV ASPNETCORE_ENVIRONMENT=$APPENV
+
+# not work
+#RUN export ASPNETCORE_ENVIRONMENT="Default" 
 
 WORKDIR /app
 COPY --from=dotnet_sdk /code/VoteIt/VoteIt/code_publish ./
