@@ -30,5 +30,6 @@ ENV ASPNETCORE_ENVIRONMENT ${ASPNETCORE_ENVIRONMENT}
 
 WORKDIR /app
 COPY --from=dotnet_sdk /code/VoteIt/VoteIt/code_publish ./
-COPY --from=git_client /repo/VoteIt/data/VoteItDB.sqlite ./
+COPY --from=git_client /repo/VoteIt/data/VoteItDB.sqlite /data/
+COPY ./appsettings.Production.json ./
 CMD ["dotnet", "VoteIt.dll"]
