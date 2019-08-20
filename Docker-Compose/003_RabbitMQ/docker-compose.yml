@@ -1,0 +1,6 @@
+version: '2.1'
+services:
+  nmq_worker:
+    image: andrew0928/mqrpc.rabbitmq:latest
+    ports:
+      - "15672:15672"
