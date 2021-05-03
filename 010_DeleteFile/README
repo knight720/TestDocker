@@ -1,0 +1,6 @@
+Image Layer Build 問題
+dockerfile 刪除的檔案依然會存在並且佔用空間
+Case 1. 不複製任何檔案
+Case 2. 複製 100MB 的檔案後刪除
+Case 3. Multi Stage 是否能避免這個情境
+Ans. 使用 Multi Stage 可以以避免佔用空間的問題
