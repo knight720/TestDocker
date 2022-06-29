@@ -1,0 +1,29 @@
+FROM alpine
+
+# ARG1=1 ARG3=3
+ARG ARG1 ARG2 ARG3 ARG4
+
+ENV ENV1=${ARG1}
+
+ENV ENV2=${ARG2}
+
+ENV ENV31=${ARG3}
+# Default Value
+ENV ENV32=${ARG3:-32} 
+# ARG3 Not Null Overwirte
+ENV ENV33=${ARG3:+33} 
+
+ENV ENV41=${ARG4}
+# Default Value
+ENV ENV42=${ARG4:-42}
+# ARG4 Is Null Not Overwirte
+ENV ENV43=${ARG4:+43}
+
+# ENV1:1
+RUN echo "ENV1:"${ENV1}
+# ENV2:
+RUN echo "ENV2:"${ENV2}
+# ENV31:3  ENV32:3  ENV33:33
+RUN echo "ENV31:"${ENV31} " ENV32:"${ENV32} " ENV33:"${ENV33}
+# ENV41:  ENV42:42  ENV43:
+RUN echo "ENV41:"${ENV41} " ENV42:"${ENV42} " ENV43:"${ENV43}
