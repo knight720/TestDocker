@@ -1,0 +1,4 @@
+FROM rust
+
+RUN apt update && apt -y upgrade
+RUN apt -y install vim
