@@ -1,0 +1,4 @@
+- build image
+```
+docker build . -f Dockerfile6 -t asp6
+```
