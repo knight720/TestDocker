@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # Elasticsearch 節點 1
+  elasticsearch-node1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
+    container_name: es-node1
+    environment:
+      - node.name=es-node1
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=es-node2
+      - cluster.initial_master_nodes=es-node1,es-node2
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es-data1:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - elastic
+
+  # Elasticsearch 節點 2
+  elasticsearch-node2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
+    container_name: es-node2
+    environment:
+      - node.name=es-node2
+      - cluster.name=es-cluster
+      - discovery.seed_hosts=es-node1
+      - cluster.initial_master_nodes=es-node1,es-node2
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es-data2:/usr/share/elasticsearch/data
+    ports:
+      - "9201:9200"
+      - "9301:9300"
+    networks:
+      - elastic
+
+  # Kibana
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.15.3
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch-node1:9200
+      - SERVER_NAME=kibana
+      - SERVER_HOST=0.0.0.0
+    ports:
+      - "5601:5601"
+    networks:
+      - elastic
+    depends_on:
+      - elasticsearch-node1
+      - elasticsearch-node2
+
+volumes:
+  es-data1:
+    driver: local
+  es-data2:
+    driver: local
+
+networks:
+  elastic:
+    driver: bridge
